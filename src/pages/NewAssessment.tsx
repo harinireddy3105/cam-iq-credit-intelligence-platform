@@ -90,8 +90,46 @@ export default function NewAssessment() {
   const [streamedText, setStreamedText] = useState('');
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
+  const [uploads, setUploads] = useState<Record<DocKey, UploadedFile | null>>(
+    () => Object.fromEntries(DOC_TYPES.map(d => [d.key, null])) as Record<DocKey, UploadedFile | null>
+  );
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const cinValid = /^[A-Z]\d{5}[A-Z]{2}\d{4}[A-Z]{3}\d{6}$/.test(cin);
+
+  const handleFileSelect = async (docKey: DocKey, file: File) => {
+    if (file.size > 50 * 1024 * 1024) {
+      toast({ title: 'File Too Large', description: 'Maximum file size is 50MB.', variant: 'destructive' });
+      return;
+    }
+    if (!user) return;
+
+    setUploads(prev => ({ ...prev, [docKey]: { file, uploading: true, uploaded: false } }));
+
+    const ext = file.name.split('.').pop() || 'pdf';
+    const path = `${user.id}/${docKey}/${Date.now()}.${ext}`;
+
+    const { error } = await supabase.storage
+      .from('cam-iq-documents')
+      .upload(path, file, { upsert: true });
+
+    if (error) {
+      setUploads(prev => ({ ...prev, [docKey]: { file, uploading: false, uploaded: false, error: error.message } }));
+      toast({ title: 'Upload Failed', description: error.message, variant: 'destructive' });
+    } else {
+      setUploads(prev => ({ ...prev, [docKey]: { file, uploading: false, uploaded: true, storagePath: path } }));
+    }
+  };
+
+  const removeFile = async (docKey: DocKey) => {
+    const upload = uploads[docKey];
+    if (upload?.storagePath) {
+      await supabase.storage.from('cam-iq-documents').remove([upload.storagePath]);
+    }
+    setUploads(prev => ({ ...prev, [docKey]: null }));
+  };
+
+  const requiredDocsUploaded = DOC_TYPES.filter(d => d.required).every(d => uploads[d.key]?.uploaded);
 
   const runAnalysis = useCallback(async () => {
     setAnalyzing(true);
