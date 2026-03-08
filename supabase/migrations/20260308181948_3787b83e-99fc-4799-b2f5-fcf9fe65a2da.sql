@@ -1,0 +1,1 @@
+UPDATE assessments SET created_by = '82603c81-0883-46c0-a127-4d2afdaa4503' WHERE id = '1d477d47-c868-44de-987b-921390ab0993'
