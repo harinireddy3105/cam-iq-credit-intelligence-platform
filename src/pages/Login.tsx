@@ -4,7 +4,8 @@ import { Shield, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 function AnimatedStat({ value, label, delay, colorClass }: { value: string; label: string; delay: number; colorClass: string }) {
   const [visible, setVisible] = useState(false);
@@ -22,12 +23,39 @@ function AnimatedStat({ value, label, delay, colorClass }: { value: string; labe
 
 export default function Login() {
   const navigate = useNavigate();
+  const { signIn, signUp, session } = useAuth();
+  const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (session) navigate('/dashboard', { replace: true });
+  }, [session, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/dashboard');
+    setSubmitting(true);
+    try {
+      if (isSignUp) {
+        const { error } = await signUp(email, password, fullName);
+        if (error) {
+          toast({ title: 'Registration Failed', description: error.message, variant: 'destructive' });
+        } else {
+          toast({ title: 'Account Created', description: 'Please check your email to confirm your account, or sign in directly.' });
+          setIsSignUp(false);
+        }
+      } else {
+        const { error } = await signIn(email, password);
+        if (error) {
+          toast({ title: 'Authentication Failed', description: error.message, variant: 'destructive' });
+        }
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -80,34 +108,38 @@ export default function Login() {
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold">Sign In</h2>
-            <p className="text-sm text-muted-foreground mt-1">Access your credit intelligence dashboard</p>
+            <h2 className="text-2xl font-bold">{isSignUp ? 'Create Account' : 'Sign In'}</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              {isSignUp ? 'Register for CAM-IQ access' : 'Access your credit intelligence dashboard'}
+            </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {isSignUp && (
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input id="fullName" placeholder="e.g. Rajesh Kumar" value={fullName} onChange={e => setFullName(e.target.value)} required />
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
               <Input id="email" type="email" placeholder="officer@sbi.co.in" value={email} onChange={e => setEmail(e.target.value)} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+              <Input id="password" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
             </div>
-            <div className="space-y-2">
-              <Label>Role</Label>
-              <Select defaultValue="credit_officer">
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="credit_officer">Credit Officer</SelectItem>
-                  <SelectItem value="branch_manager">Branch Manager</SelectItem>
-                  <SelectItem value="risk_committee">Risk Committee</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <Button type="submit" className="w-full" size="lg">
-              Sign In to CAM-IQ
+            <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+              {submitting ? 'Processing...' : isSignUp ? 'Create Account' : 'Sign In to CAM-IQ'}
             </Button>
           </form>
+
+          <p className="text-center text-sm text-muted-foreground">
+            {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+            <button onClick={() => setIsSignUp(!isSignUp)} className="text-primary hover:underline">
+              {isSignUp ? 'Sign In' : 'Register'}
+            </button>
+          </p>
 
           <p className="text-center text-[10px] text-muted-foreground tracking-wide flex items-center justify-center gap-1 lg:hidden">
             <Lock className="h-3 w-3" /> Secured · RBI Compliance Ready

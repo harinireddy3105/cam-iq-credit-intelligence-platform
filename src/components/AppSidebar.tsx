@@ -6,6 +6,7 @@ import {
   SidebarHeader, SidebarFooter, useSidebar,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
 const navItems = [
   { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
@@ -20,6 +21,20 @@ export function AppSidebar() {
   const collapsed = state === 'collapsed';
   const location = useLocation();
   const navigate = useNavigate();
+  const { profile, signOut } = useAuth();
+
+  const initials = profile?.full_name
+    ? profile.full_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+    : 'U';
+
+  const roleLabel = profile?.role
+    ? profile.role.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    : 'Officer';
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -64,12 +79,12 @@ export function AppSidebar() {
       <SidebarFooter className="p-4 border-t border-sidebar-border">
         {!collapsed && (
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-cam-processing">RK</div>
+            <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-cam-processing">{initials}</div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">Rajesh Kumar</p>
-              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Credit Officer</p>
+              <p className="text-sm font-medium text-foreground truncate">{profile?.full_name || 'User'}</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{roleLabel}</p>
             </div>
-            <button onClick={() => navigate('/')} className="text-muted-foreground hover:text-foreground">
+            <button onClick={handleSignOut} className="text-muted-foreground hover:text-foreground" title="Sign out">
               <LogOut className="h-4 w-4" />
             </button>
           </div>
