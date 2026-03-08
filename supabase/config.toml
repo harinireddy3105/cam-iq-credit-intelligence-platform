@@ -1,1 +1,4 @@
 project_id = "qbarwbabslicogcwpibe"
+
+[functions.credit-analysis]
+verify_jwt = false
