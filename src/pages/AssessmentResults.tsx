@@ -9,6 +9,7 @@ import { AppLayout } from '@/components/AppLayout';
 import { formatINR, getScoreColor, getScoreBarColor } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
+import { generateCAMPdf } from '@/lib/generate-cam-pdf';
 
 const FIVE_CS = ['character', 'capacity', 'capital', 'collateral', 'conditions'] as const;
 const FIVE_CS_WEIGHTS: Record<string, number> = { character: 25, capacity: 30, capital: 20, collateral: 15, conditions: 10 };
