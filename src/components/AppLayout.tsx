@@ -1,5 +1,6 @@
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from './AppSidebar';
+import { AIChatbot } from './AIChatbot';
 import { Bell } from 'lucide-react';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -21,6 +22,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
         </div>
       </div>
+      <AIChatbot />
     </SidebarProvider>
   );
 }
