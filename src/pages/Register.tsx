@@ -140,6 +140,9 @@ export default function Register() {
               <SelectItem value="rejected">Rejected</SelectItem>
             </SelectContent>
           </Select>
+          <Button variant="outline" size="sm" onClick={exportCSV} disabled={!filtered.length} className="gap-1.5">
+            <Download className="h-3.5 w-3.5" />Export CSV
+          </Button>
         </div>
 
         <Card>
