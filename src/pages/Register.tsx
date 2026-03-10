@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Search, ArrowUpDown, ArrowUp, ArrowDown, Download } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -93,6 +93,29 @@ export default function Register() {
 
   const formatLoan = (v: number | null) => v != null ? `₹${v} Cr` : '—';
 
+  const exportCSV = () => {
+    if (!filtered.length) return;
+    const headers = ['Borrower', 'CIN', 'Sector', 'Loan Requested', 'Score', 'Flags', 'Status', 'Date'];
+    const rows = filtered.map(a => [
+      a.borrower_name,
+      a.cin || '',
+      a.sector || '',
+      a.loan_requested ?? '',
+      a.composite_score ?? '',
+      a.flag_count,
+      a.status,
+      new Date(a.created_at).toLocaleDateString('en-IN'),
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `assessments_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <AppLayout>
       <div className="space-y-6">
@@ -117,6 +140,9 @@ export default function Register() {
               <SelectItem value="rejected">Rejected</SelectItem>
             </SelectContent>
           </Select>
+          <Button variant="outline" size="sm" onClick={exportCSV} disabled={!filtered.length} className="gap-1.5">
+            <Download className="h-3.5 w-3.5" />Export CSV
+          </Button>
         </div>
 
         <Card>
