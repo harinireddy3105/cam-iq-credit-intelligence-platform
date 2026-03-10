@@ -93,6 +93,29 @@ export default function Register() {
 
   const formatLoan = (v: number | null) => v != null ? `₹${v} Cr` : '—';
 
+  const exportCSV = () => {
+    if (!filtered.length) return;
+    const headers = ['Borrower', 'CIN', 'Sector', 'Loan Requested', 'Score', 'Flags', 'Status', 'Date'];
+    const rows = filtered.map(a => [
+      a.borrower_name,
+      a.cin || '',
+      a.sector || '',
+      a.loan_requested ?? '',
+      a.composite_score ?? '',
+      a.flag_count,
+      a.status,
+      new Date(a.created_at).toLocaleDateString('en-IN'),
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `assessments_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <AppLayout>
       <div className="space-y-6">
