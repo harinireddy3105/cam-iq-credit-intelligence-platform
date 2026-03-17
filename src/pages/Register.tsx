@@ -80,7 +80,12 @@ export default function Register() {
     });
 
     return list;
-  }, [assessments, search, statusFilter, sortField, sortDir]);
+  // Reset page when filters change
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const safeePage = Math.min(page, totalPages);
+  const paginated = filtered.slice((safeePage - 1) * PAGE_SIZE, safeePage * PAGE_SIZE);
+
+
 
   const toggleSort = (field: SortField) => {
     if (sortField === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
