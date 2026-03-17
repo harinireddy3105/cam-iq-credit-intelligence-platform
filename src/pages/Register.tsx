@@ -196,7 +196,7 @@ export default function Register() {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filtered.map(a => (
+                    paginated.map(a => (
                       <TableRow key={a.id} className="cursor-pointer hover:bg-secondary/50" onClick={() => navigate(`/assessment/${a.id}/results`)}>
                         <TableCell className="font-medium">{a.borrower_name}</TableCell>
                         <TableCell className="font-mono text-xs text-muted-foreground">{a.cin || '—'}</TableCell>
