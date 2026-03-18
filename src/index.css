@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -40,6 +42,16 @@
     --sidebar-accent-foreground: 213 20% 88%;
     --sidebar-border: 222 15% 15%;
     --sidebar-ring: 187 92% 37%;
+
+    /* Premium tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(187 92% 37%), hsl(200 90% 45%));
+    --gradient-gold: linear-gradient(135deg, hsl(42 80% 55%), hsl(32 95% 50%));
+    --gradient-danger: linear-gradient(135deg, hsl(0 72% 51%), hsl(15 80% 45%));
+    --gradient-surface: linear-gradient(180deg, hsl(222 25% 12%) 0%, hsl(222 25% 9%) 100%);
+    --shadow-glow-primary: 0 0 20px -5px hsl(187 92% 37% / 0.25);
+    --shadow-glow-danger: 0 0 20px -5px hsl(0 72% 51% / 0.25);
+    --shadow-elevated: 0 8px 32px -8px hsl(222 30% 4% / 0.6), 0 2px 8px -2px hsl(222 30% 4% / 0.3);
+    --shadow-card: 0 1px 3px 0 hsl(222 30% 4% / 0.3), 0 1px 2px -1px hsl(222 30% 4% / 0.3);
   }
 }
 
@@ -48,8 +60,48 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+  
+  /* Subtle grid background for pages */
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(hsl(222 15% 18% / 0.3) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(222 15% 18% / 0.3) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* Glass card effect */
+  .glass-card {
+    background: hsl(222 25% 11% / 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid hsl(222 15% 20% / 0.6);
+    box-shadow: var(--shadow-card);
+  }
+
+  .glass-card-elevated {
+    background: hsl(222 25% 12% / 0.8);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(222 15% 22% / 0.5);
+    box-shadow: var(--shadow-elevated);
+  }
+
+  /* Gradient border effect */
+  .gradient-border {
+    position: relative;
+  }
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(187 92% 37% / 0.4), hsl(222 15% 18% / 0.2), hsl(42 80% 55% / 0.2));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
   }
 }
 
@@ -67,5 +119,44 @@
   }
   .animate-live-pulse {
     animation: livePulse 1.5s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .animate-shimmer {
+    background: linear-gradient(90deg, transparent, hsl(187 92% 37% / 0.08), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(222 15% 22%);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(222 15% 28%);
   }
 }
