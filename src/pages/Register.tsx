@@ -153,64 +153,82 @@ export default function Register() {
           </Button>
         </div>
 
-        <Card>
+        <Card className="border-border/60 overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-[10px] cursor-pointer select-none" onClick={() => toggleSort('borrower_name')}>
-                      <span className="inline-flex items-center">Borrower<SortIcon field="borrower_name" /></span>
+                  <TableRow className="bg-secondary/60 border-b-2 border-border hover:bg-secondary/60">
+                    <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 cursor-pointer select-none py-3 pl-4" onClick={() => toggleSort('borrower_name')}>
+                      <span className="inline-flex items-center gap-0.5">Borrower<SortIcon field="borrower_name" /></span>
                     </TableHead>
-                    <TableHead className="text-[10px]">CIN</TableHead>
-                    <TableHead className="text-[10px]">Sector</TableHead>
-                    <TableHead className="text-[10px] text-right cursor-pointer select-none" onClick={() => toggleSort('loan_requested')}>
-                      <span className="inline-flex items-center justify-end">Loan<SortIcon field="loan_requested" /></span>
+                    <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 py-3">CIN</TableHead>
+                    <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 py-3">Sector</TableHead>
+                    <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 text-right cursor-pointer select-none py-3" onClick={() => toggleSort('loan_requested')}>
+                      <span className="inline-flex items-center justify-end gap-0.5">Loan Amt<SortIcon field="loan_requested" /></span>
                     </TableHead>
-                    <TableHead className="text-[10px] text-center cursor-pointer select-none" onClick={() => toggleSort('composite_score')}>
-                      <span className="inline-flex items-center justify-center">Score<SortIcon field="composite_score" /></span>
+                    <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 text-center cursor-pointer select-none py-3" onClick={() => toggleSort('composite_score')}>
+                      <span className="inline-flex items-center justify-center gap-0.5">Score<SortIcon field="composite_score" /></span>
                     </TableHead>
-                    <TableHead className="text-[10px] text-center">Flags</TableHead>
-                    <TableHead className="text-[10px] cursor-pointer select-none" onClick={() => toggleSort('status')}>
-                      <span className="inline-flex items-center">Status<SortIcon field="status" /></span>
+                    <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 text-center py-3">Flags</TableHead>
+                    <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 cursor-pointer select-none py-3" onClick={() => toggleSort('status')}>
+                      <span className="inline-flex items-center gap-0.5">Status<SortIcon field="status" /></span>
                     </TableHead>
-                    <TableHead className="text-[10px] cursor-pointer select-none" onClick={() => toggleSort('created_at')}>
-                      <span className="inline-flex items-center">Date<SortIcon field="created_at" /></span>
+                    <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 cursor-pointer select-none py-3" onClick={() => toggleSort('created_at')}>
+                      <span className="inline-flex items-center gap-0.5">Date<SortIcon field="created_at" /></span>
                     </TableHead>
-                    <TableHead className="text-[10px]"></TableHead>
+                    <TableHead className="text-[10px] py-3 pr-4"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
-                    Array.from({ length: 5 }).map((_, i) => (
-                      <TableRow key={i}>
+                    Array.from({ length: 8 }).map((_, i) => (
+                      <TableRow key={i} className={i % 2 === 0 ? 'bg-card' : 'bg-secondary/20'}>
                         {Array.from({ length: 9 }).map((_, j) => (
-                          <TableCell key={j}><Skeleton className="h-4 w-full" /></TableCell>
+                          <TableCell key={j} className="py-2.5"><Skeleton className="h-4 w-full rounded" /></TableCell>
                         ))}
                       </TableRow>
                     ))
                   ) : filtered.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="text-center text-muted-foreground py-12">
-                        No assessments found
+                      <TableCell colSpan={9} className="text-center text-muted-foreground py-16">
+                        <div className="flex flex-col items-center gap-2">
+                          <Search className="h-8 w-8 text-muted-foreground/40" />
+                          <span className="text-sm">No assessments found</span>
+                          <span className="text-xs text-muted-foreground/60">Try adjusting your search or filters</span>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ) : (
-                    paginated.map(a => (
-                      <TableRow key={a.id} className="cursor-pointer hover:bg-secondary/50" onClick={() => navigate(`/assessment/${a.id}/results`)}>
-                        <TableCell className="font-medium">{a.borrower_name}</TableCell>
-                        <TableCell className="font-mono text-xs text-muted-foreground">{a.cin || '—'}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground">{a.sector || '—'}</TableCell>
-                        <TableCell className="text-right font-mono">{formatLoan(a.loan_requested)}</TableCell>
-                        <TableCell className="text-center"><ScoreBadge score={a.composite_score ?? 0} /></TableCell>
-                        <TableCell className="text-center">
-                          {a.flag_count > 0
-                            ? <span className="inline-flex items-center justify-center h-5 w-5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold">{a.flag_count}</span>
-                            : <span className="text-muted-foreground">—</span>}
+                    paginated.map((a, idx) => (
+                      <TableRow
+                        key={a.id}
+                        className={`cursor-pointer transition-colors border-l-2 border-l-transparent hover:border-l-primary hover:bg-primary/5 ${idx % 2 === 0 ? 'bg-card' : 'bg-secondary/15'}`}
+                        onClick={() => navigate(`/assessment/${a.id}/results`)}
+                      >
+                        <TableCell className="font-medium text-sm py-2.5 pl-4">{a.borrower_name}</TableCell>
+                        <TableCell className="font-mono text-[11px] text-muted-foreground py-2.5">{a.cin || '—'}</TableCell>
+                        <TableCell className="text-xs text-muted-foreground py-2.5">
+                          {a.sector ? (
+                            <span className="inline-flex items-center rounded-md bg-secondary/60 px-2 py-0.5 text-[10px] font-medium text-secondary-foreground">
+                              {a.sector}
+                            </span>
+                          ) : '—'}
                         </TableCell>
-                        <TableCell><StatusBadge status={a.status as AssessmentStatus} /></TableCell>
-                        <TableCell className="text-xs text-muted-foreground">{new Date(a.created_at).toLocaleDateString('en-IN')}</TableCell>
-                        <TableCell><Button variant="ghost" size="sm" className="text-xs">View CAM</Button></TableCell>
+                        <TableCell className="text-right font-mono text-sm py-2.5">{formatLoan(a.loan_requested)}</TableCell>
+                        <TableCell className="text-center py-2.5"><ScoreBadge score={a.composite_score ?? 0} /></TableCell>
+                        <TableCell className="text-center py-2.5">
+                          {a.flag_count > 0
+                            ? <span className="inline-flex items-center justify-center h-5 min-w-[20px] rounded-full bg-destructive/90 text-destructive-foreground text-[10px] font-bold shadow-sm shadow-destructive/20">{a.flag_count}</span>
+                            : <span className="text-muted-foreground/40">—</span>}
+                        </TableCell>
+                        <TableCell className="py-2.5"><StatusBadge status={a.status as AssessmentStatus} /></TableCell>
+                        <TableCell className="text-xs text-muted-foreground py-2.5">{new Date(a.created_at).toLocaleDateString('en-IN')}</TableCell>
+                        <TableCell className="py-2.5 pr-4">
+                          <Button variant="ghost" size="sm" className="text-[11px] h-7 px-2.5 text-primary hover:text-primary hover:bg-primary/10">
+                            View CAM
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))
                   )}
