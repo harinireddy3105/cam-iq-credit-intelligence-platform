@@ -13,8 +13,8 @@ import { formatINR } from '@/lib/format';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
-const PIE_COLORS = ['hsl(0,72%,51%)', 'hsl(32,95%,44%)', 'hsl(187,92%,37%)', 'hsl(270,50%,55%)', 'hsl(160,84%,39%)'];
-const tooltipStyle = { background: 'hsl(222,25%,11%)', border: '1px solid hsl(222,15%,20%)', borderRadius: '8px', color: 'hsl(213,20%,88%)', boxShadow: '0 8px 32px -8px hsl(222,30%,4%,0.6)' };
+const PIE_COLORS = ['hsl(18,100%,60%)', 'hsl(340,82%,52%)', 'hsl(45,100%,51%)', 'hsl(187,100%,42%)', 'hsl(122,39%,49%)'];
+const tooltipStyle = { background: 'hsl(0,0%,10%)', border: '1px solid hsl(0,0%,18%)', borderRadius: '8px', color: 'hsl(0,0%,100%)', boxShadow: '0 8px 32px -8px hsl(0,0%,0%,0.6)' };
 
 interface DashboardAssessment {
   id: string;
@@ -119,7 +119,7 @@ export default function Dashboard() {
             <div className="absolute inset-0 bg-primary/20 rounded-full blur-lg" />
             <Loader2 className="h-8 w-8 animate-spin text-primary relative" />
           </div>
-          <span className="text-muted-foreground text-sm">Loading dashboard...</span>
+          <span className="text-muted-foreground text-sm font-medium">Loading dashboard...</span>
         </div>
       </AppLayout>
     );
@@ -131,17 +131,17 @@ export default function Dashboard() {
         {/* Welcome header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold tracking-tight">Command Center</h1>
-            <p className="text-sm text-muted-foreground/70 mt-0.5">Real-time credit intelligence overview</p>
+            <h1 className="text-2xl font-extrabold tracking-tight">Command Center</h1>
+            <p className="text-sm text-muted-foreground mt-0.5 font-normal">Real-time credit intelligence overview</p>
           </div>
-          <Button onClick={() => navigate('/assessment/new')} className="gap-2 shadow-lg shadow-primary/15 hover:shadow-primary/25 transition-all">
+          <Button onClick={() => navigate('/assessment/new')} className="gap-2 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all font-semibold">
             <Plus className="h-4 w-4" /> New Assessment
           </Button>
         </div>
 
         {/* KPI Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPICard title="CAMs This Month" value={String(assessments.length)} icon={FileText} color="teal" />
+          <KPICard title="CAMs This Month" value={String(assessments.length)} icon={FileText} color="orange" />
           <KPICard title="Active Fraud Flags" value={String(totalFlags)} icon={AlertTriangle} color="red" pulse={totalFlags > 0} />
           <KPICard title="Total Exposure" value={totalLoanRequested > 0 ? formatINR(totalLoanRequested) : '₹0'} icon={TrendingDown} color="green" />
           <KPICard title="Assessments" value={String(assessments.length)} icon={Clock} color="teal" />
@@ -149,10 +149,10 @@ export default function Dashboard() {
 
         {/* Main grid */}
         <div className="grid grid-cols-1 lg:grid-cols-10 gap-6">
-          <Card className="lg:col-span-7 border-border/40">
+          <Card className="lg:col-span-7 border-border/30">
             <CardHeader className="pb-3 flex flex-row items-center justify-between">
-              <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground">Recent Assessments</CardTitle>
-              <Button variant="ghost" size="sm" className="text-xs text-primary gap-1 hover:bg-primary/10" onClick={() => navigate('/register')}>
+              <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Recent Assessments</CardTitle>
+              <Button variant="ghost" size="sm" className="text-xs text-primary gap-1 hover:bg-primary/10 font-semibold" onClick={() => navigate('/register')}>
                 View All <ArrowRight className="h-3 w-3" />
               </Button>
             </CardHeader>
@@ -160,14 +160,14 @@ export default function Dashboard() {
               {assessments.length === 0 ? (
                 <div className="p-12 text-center">
                   <FileText className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">No assessments yet</p>
+                  <p className="text-sm text-muted-foreground font-medium">No assessments yet</p>
                   <p className="text-xs text-muted-foreground/60 mt-1">Click "New Assessment" to get started</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow className="bg-secondary/30 hover:bg-secondary/30">
+                      <TableRow className="bg-secondary/40 hover:bg-secondary/40">
                         <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">Borrower</TableHead>
                         <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">Sector</TableHead>
                         <TableHead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70 text-right">Loan</TableHead>
@@ -180,20 +180,20 @@ export default function Dashboard() {
                       {assessments.map((a, idx) => (
                         <TableRow
                           key={a.id}
-                          className={`cursor-pointer transition-colors border-l-2 border-l-transparent hover:border-l-primary hover:bg-primary/5 ${idx % 2 === 1 ? 'bg-secondary/10' : ''}`}
+                          className={`cursor-pointer transition-all duration-200 border-l-4 border-l-transparent hover:border-l-primary hover:bg-primary/5 ${idx % 2 === 1 ? 'bg-secondary/15' : ''}`}
                           onClick={() => navigate(`/assessment/${a.id}/results`)}
                         >
-                          <TableCell className="font-medium text-sm py-3">{a.borrower_name}</TableCell>
+                          <TableCell className="font-semibold text-sm py-3">{a.borrower_name}</TableCell>
                           <TableCell className="text-xs text-muted-foreground">
                             {a.sector ? (
-                              <span className="inline-flex items-center rounded-md bg-secondary/50 px-2 py-0.5 text-[10px] font-medium">{a.sector}</span>
+                              <span className="inline-flex items-center rounded-full bg-secondary/60 px-2.5 py-0.5 text-[10px] font-medium">{a.sector}</span>
                             ) : '—'}
                           </TableCell>
                           <TableCell className="text-right font-mono text-sm">{a.loan_requested ? formatINR(a.loan_requested) : '—'}</TableCell>
                           <TableCell className="text-center"><ScoreBadge score={a.composite_score || 0} /></TableCell>
                           <TableCell><StatusBadge status={a.status as any} /></TableCell>
                           <TableCell>
-                            <Button variant="ghost" size="sm" className="text-[11px] h-7 px-2.5 text-primary hover:bg-primary/10">View</Button>
+                            <Button variant="ghost" size="sm" className="text-[11px] h-7 px-2.5 text-primary hover:bg-primary/10 font-semibold">View</Button>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -205,9 +205,9 @@ export default function Dashboard() {
           </Card>
 
           <div className="lg:col-span-3 space-y-4">
-            <Card className="border-border/40">
+            <Card className="border-border/30">
               <CardHeader className="pb-3">
-                <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground font-semibold flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-destructive animate-live-pulse" />
                   Live Fraud Alerts
                 </CardTitle>
@@ -216,30 +216,30 @@ export default function Dashboard() {
                 {fraudAlerts.length === 0 && (
                   <div className="py-6 text-center">
                     <AlertTriangle className="h-8 w-8 text-muted-foreground/20 mx-auto mb-2" />
-                    <p className="text-xs text-muted-foreground/60">No fraud alerts detected</p>
+                    <p className="text-xs text-muted-foreground/60 font-medium">No fraud alerts detected</p>
                   </div>
                 )}
                 {fraudAlerts.slice(0, 5).map((f) => (
-                  <div key={f.id} className="flex items-start gap-2.5 text-xs border-b border-border/30 pb-3 last:border-0 last:pb-0 group hover:bg-secondary/20 -mx-2 px-2 py-1 rounded-lg transition-colors">
+                  <div key={f.id} className="flex items-start gap-2.5 text-xs border-b border-border/20 pb-3 last:border-0 last:pb-0 group hover:bg-secondary/30 -mx-2 px-2 py-1.5 rounded-lg transition-colors">
                     <span className="h-1.5 w-1.5 rounded-full bg-destructive animate-live-pulse mt-1.5 shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium truncate">{f.borrower_name}</p>
+                      <p className="font-semibold truncate">{f.borrower_name}</p>
                       <p className="text-muted-foreground/70">{f.fraud_type}</p>
                     </div>
-                    <span className={`shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-md ${f.severity === 'HIGH' ? 'bg-destructive/15 text-destructive' : 'bg-cam-warning/15 text-cam-warning'}`}>
+                    <span className={`shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full ${f.severity === 'HIGH' ? 'bg-destructive/15 text-destructive' : 'bg-cam-warning/15 text-cam-warning'}`}>
                       {f.severity}
                     </span>
                   </div>
                 ))}
               </CardContent>
             </Card>
-            <Card className="border-border/40">
+            <Card className="border-border/30">
               <CardHeader className="pb-2">
-                <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground">Fraud Typology</CardTitle>
+                <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Fraud Typology</CardTitle>
               </CardHeader>
               <CardContent>
                 {fraudTypesData.length === 0 ? (
-                  <p className="text-xs text-muted-foreground/50 text-center py-8">No fraud data yet</p>
+                  <p className="text-xs text-muted-foreground/50 text-center py-8 font-medium">No fraud data yet</p>
                 ) : (
                   <>
                     <ResponsiveContainer width="100%" height={180}>
@@ -254,10 +254,10 @@ export default function Dashboard() {
                       {fraudTypesData.map((f, i) => (
                         <div key={f.name} className="flex items-center justify-between text-[11px] py-0.5">
                           <div className="flex items-center gap-2">
-                            <span className="h-2.5 w-2.5 rounded shrink-0" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
+                            <span className="h-2.5 w-2.5 rounded-sm shrink-0" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
                             <span className="text-muted-foreground">{f.name}</span>
                           </div>
-                          <span className="font-mono font-medium">{f.value}</span>
+                          <span className="font-mono font-semibold">{f.value}</span>
                         </div>
                       ))}
                     </div>
@@ -270,35 +270,35 @@ export default function Dashboard() {
 
         {/* Charts row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="border-border/40">
+          <Card className="border-border/30">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground">CAMs Processed — Recent Weeks</CardTitle>
+              <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">CAMs Processed — Recent Weeks</CardTitle>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={weeklyData}>
-                  <XAxis dataKey="week" tick={{ fontSize: 11, fill: 'hsl(215,15%,50%)' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: 'hsl(215,15%,50%)' }} axisLine={false} tickLine={false} />
-                  <RechartsTooltip contentStyle={tooltipStyle} cursor={{ fill: 'hsl(222,18%,14%,0.5)' }} />
-                  <Bar dataKey="cams" fill="hsl(187,92%,37%)" radius={[6, 6, 0, 0]} />
+                  <XAxis dataKey="week" tick={{ fontSize: 11, fill: 'hsl(0,0%,63%)' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: 'hsl(0,0%,63%)' }} axisLine={false} tickLine={false} />
+                  <RechartsTooltip contentStyle={tooltipStyle} cursor={{ fill: 'hsl(0,0%,14%,0.5)' }} />
+                  <Bar dataKey="cams" fill="hsl(18,100%,60%)" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </CardContent>
           </Card>
-          <Card className="border-border/40">
+          <Card className="border-border/30">
             <CardHeader className="pb-2">
-              <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground">Score Distribution</CardTitle>
+              <CardTitle className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Score Distribution</CardTitle>
             </CardHeader>
             <CardContent>
               {assessments.length === 0 ? (
-                <p className="text-xs text-muted-foreground/50 text-center py-16">No score data yet</p>
+                <p className="text-xs text-muted-foreground/50 text-center py-16 font-medium">No score data yet</p>
               ) : (
                 <ResponsiveContainer width="100%" height={220}>
                   <BarChart data={assessments.filter(a => a.composite_score).map(a => ({ name: a.borrower_name.split(' ')[0], score: a.composite_score }))}>
-                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: 'hsl(215,15%,50%)' }} axisLine={false} tickLine={false} />
-                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: 'hsl(215,15%,50%)' }} axisLine={false} tickLine={false} />
-                    <RechartsTooltip contentStyle={tooltipStyle} cursor={{ fill: 'hsl(222,18%,14%,0.5)' }} />
-                    <Bar dataKey="score" fill="hsl(42,80%,55%)" radius={[6, 6, 0, 0]} />
+                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: 'hsl(0,0%,63%)' }} axisLine={false} tickLine={false} />
+                    <YAxis domain={[0, 100]} tick={{ fontSize: 11, fill: 'hsl(0,0%,63%)' }} axisLine={false} tickLine={false} />
+                    <RechartsTooltip contentStyle={tooltipStyle} cursor={{ fill: 'hsl(0,0%,14%,0.5)' }} />
+                    <Bar dataKey="score" fill="hsl(45,100%,51%)" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               )}

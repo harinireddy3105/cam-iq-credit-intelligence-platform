@@ -41,15 +41,15 @@ export function AppSidebar() {
       <SidebarHeader className="p-4 border-b border-sidebar-border/50">
         <Link to="/dashboard" className="flex items-center gap-2.5 group">
           <div className="relative shrink-0">
-            <div className="absolute inset-0 bg-primary/15 rounded-lg blur-md group-hover:bg-primary/25 transition-colors" />
-            <div className="relative bg-secondary/60 rounded-lg p-2 border border-border/40">
+            <div className="absolute inset-0 bg-primary/20 rounded-xl blur-lg group-hover:bg-primary/30 transition-colors" />
+            <div className="relative bg-gradient-to-br from-primary/20 to-accent/10 rounded-xl p-2 border border-primary/20">
               <Shield className="h-5 w-5 text-primary" />
             </div>
           </div>
           {!collapsed && (
             <div>
-              <span className="text-lg font-bold tracking-tight text-foreground">CAM-IQ</span>
-              <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground leading-none">Credit Intelligence</p>
+              <span className="text-lg font-extrabold tracking-tight text-foreground">CAM-IQ</span>
+              <p className="text-[9px] uppercase tracking-[0.2em] text-primary/70 font-semibold leading-none">Credit Intelligence</p>
             </div>
           )}
         </Link>
@@ -65,18 +65,18 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       asChild
                       className={cn(
-                        'transition-all duration-200 rounded-lg',
-                        isActive && 'bg-primary/10 text-primary border border-primary/15 shadow-sm',
-                        !isActive && 'hover:bg-secondary/60',
+                        'transition-all duration-200 rounded-lg h-11',
+                        isActive && 'bg-primary/15 text-primary border-l-4 border-l-primary shadow-sm',
+                        !isActive && 'hover:bg-secondary/80 border-l-4 border-l-transparent',
                         item.highlight && !isActive && 'text-primary'
                       )}
                     >
-                      <Link to={item.url} className="flex items-center gap-2">
-                        <item.icon className={cn('h-4 w-4', isActive && 'text-primary')} />
+                      <Link to={item.url} className="flex items-center gap-3">
+                        <item.icon className={cn('h-[18px] w-[18px]', isActive ? 'text-primary' : 'text-muted-foreground')} />
                         {!collapsed && (
                           <>
-                            <span className="flex-1">{item.title}</span>
-                            {isActive && <ChevronRight className="h-3 w-3 text-primary/60" />}
+                            <span className={cn('flex-1 text-sm font-medium', isActive && 'font-semibold')}>{item.title}</span>
+                            {isActive && <ChevronRight className="h-3.5 w-3.5 text-primary/60" />}
                           </>
                         )}
                       </Link>
@@ -91,14 +91,14 @@ export function AppSidebar() {
       <SidebarFooter className="p-4 border-t border-sidebar-border/50">
         {!collapsed && (
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/15 flex items-center justify-center text-xs font-bold text-primary">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xs font-bold text-primary-foreground shadow-lg">
               {initials}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">{profile?.full_name || 'User'}</p>
-              <p className="text-[9px] uppercase tracking-wider text-muted-foreground/70">{roleLabel}</p>
+              <p className="text-sm font-semibold text-foreground truncate">{profile?.full_name || 'User'}</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">{roleLabel}</p>
             </div>
-            <button onClick={handleSignOut} className="text-muted-foreground hover:text-destructive transition-colors p-1.5 rounded-lg hover:bg-destructive/10" title="Sign out">
+            <button onClick={handleSignOut} className="text-muted-foreground hover:text-destructive transition-colors p-2 rounded-lg hover:bg-destructive/10" title="Sign out">
               <LogOut className="h-4 w-4" />
             </button>
           </div>
